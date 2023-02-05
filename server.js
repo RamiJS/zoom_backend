@@ -67,7 +67,7 @@ app.post("/send-email", async (req, res) => {
 
 app.post("/send-ratings", async (req, res) => {
   try {
-    const { name, content } = req.body;
+    const { name, content, rating } = req.body;
     let transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
@@ -81,7 +81,7 @@ app.post("/send-ratings", async (req, res) => {
     let info = await transporter.sendMail({
       from: name,
       to: process.env.SENT_TO,
-      subject: name,
+      subject: 'تقييم من عميل',
       html: `
       <html>
         <head>
@@ -101,6 +101,7 @@ app.post("/send-ratings", async (req, res) => {
         <body>
           <a class="subject">رسالة من قبل: ${name}</a>
           <p>الرسالة: ${content}</p>
+          <p>التقييم: ${rating} نجمة/نجوم</p>
         </body>
       </html>
     `,
