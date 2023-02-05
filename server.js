@@ -64,6 +64,55 @@ app.post("/send-email", async (req, res) => {
   }
 });
 
+
+app.post("/send-ratings", async (req, res) => {
+  try {
+    const { name, content } = req.body;
+    let transporter = nodemailer.createTransport({
+      host: "smtp.gmail.com",
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.ACC_EMAIL,
+        pass: process.env.ACC_PASS,
+      },
+    });
+
+    let info = await transporter.sendMail({
+      from: name,
+      to: process.env.SENT_TO,
+      subject: name,
+      html: `
+      <html>
+        <head>
+          <style>
+            a {
+              color: blue;
+            }
+            p {
+              font-size: 16px;
+            }
+            .subject {
+              font-size: 20px;
+              font-weight: bold;
+            }
+          </style>
+        </head>
+        <body>
+          <a class="subject">رسالة من قبل: ${name}</a>
+          <p>الرسالة: ${content}</p>
+        </body>
+      </html>
+    `,
+    });
+
+    res.status(200).json({ message: "Email sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to send email" });
+  }
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server started on port ${port}`);
